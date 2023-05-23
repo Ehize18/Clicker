@@ -12,7 +12,7 @@ namespace gamer.Controls
 {
     public class Button
     {
-        public int _id { get; private set; }
+        public int ID { get; private set; }
 
         private MouseState _currentMouse;
 
@@ -52,7 +52,7 @@ namespace gamer.Controls
 
             PenColour = Color.White;
 
-            _id = id;
+            ID = id;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

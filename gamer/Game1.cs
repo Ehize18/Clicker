@@ -227,10 +227,10 @@ namespace gamer
 
         private void UpgradeCharacter(object sender, EventArgs e)
         {
-            var id = ((Button)sender)._id;
+            var id = ((Button)sender).ID;
             if (_money >= _characters[id].UpgradeCost)
             {
-                _characters[((Button)sender)._id].LevelUp();
+                _characters[((Button)sender).ID].LevelUp();
                 _money -= _characters[id].UpgradeCost-1;
             }
         }
@@ -252,8 +252,8 @@ namespace gamer
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             foreach (var button in _buttons)
-                if (button._id != -1)
-                    button.Update(gameTime, _characters[button._id].UpgradeCost.ToString());
+                if (button.ID != -1)
+                    button.Update(gameTime, _characters[button.ID].UpgradeCost.ToString());
                 else
                     button.Update(gameTime, _mcUpgradeCost.ToString());
             _nextLevelButton.Update(gameTime, null);
