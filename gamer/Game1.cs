@@ -180,6 +180,7 @@ namespace gamer
             _nextLevelButton.Position = new Vector2(-1000, 0);
             _isLoop = false;
         }
+
         private void DecreaseLevel(object sender, EventArgs e)
         {
             _level -= 1;
@@ -187,6 +188,7 @@ namespace gamer
             _nextLevelButton.Position = new Vector2(1500, 0);
             _isLoop = true;
         }
+
         private void IncreaseMoney(object sender, EventArgs e)
         {
             int enemyMultiplier = 1;
@@ -242,12 +244,16 @@ namespace gamer
                     button.Update(gameTime, _characters[button.ID].UpgradeCost.ToString());
                 else
                     button.Update(gameTime, _mcUpgradeCost.ToString());
+
             _nextLevelButton.Update(gameTime, null);
+
             foreach (var description in _characterDescriptions)
                 description.Update(gameTime, null);
+
             _moneyText.Update(gameTime, _money.ToString());
             _mcDamageText.Update(gameTime, "click damage: " + _mcDamage.ToString());
             _idleDamageText.Update(gameTime, "idle damage: " + GetIdleDamage(_characters));
+
             if (_characterDamageTimer < 1)
                 _characterDamageTimer += 1.0f / 60;
             else
@@ -256,7 +262,9 @@ namespace gamer
                 foreach (var character in _characters)
                     character.Update(gameTime);
             }
+
             _enemy.Update(gameTime, _mcDamage, _isLoop);
+
             base.Update(gameTime);
         }
 
@@ -264,19 +272,26 @@ namespace gamer
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
+
             _spriteBatch.Draw(Content.Load<Texture2D>("fone"), new Vector2(0, 0), Color.White);
             _nextLevelButton.Draw(gameTime, _spriteBatch);
             _spriteBatch.Draw(Content.Load<Texture2D>("mc"), new Vector2(36, 288), Color.White);
+
             foreach (var character in _characters)
                 character.Draw(gameTime, _spriteBatch);
+
             foreach (var button in _upgradeButtons)
                 button.Draw(gameTime, _spriteBatch);
+
             foreach (var text in _characterDescriptions)
                 text.Draw(gameTime, _spriteBatch);
+
             _moneyText.Draw(gameTime, _spriteBatch);
             _mcDamageText.Draw(gameTime, _spriteBatch);
             _idleDamageText.Draw(gameTime, _spriteBatch);
+
             _enemy.Draw(gameTime, _spriteBatch);
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
