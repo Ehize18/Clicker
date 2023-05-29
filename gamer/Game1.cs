@@ -19,6 +19,7 @@ namespace gamer
         private List<TextField> _characterDescriptions;
         private List<Character> _characters;
         private int _level = 1;
+        private TextField _levelText;
         private Enemy _enemy;
         private int _money = 0;
         private int _moneyMultiplier = 1;
@@ -69,6 +70,7 @@ namespace gamer
             };
 
             var font72 = Content.Load<SpriteFont>("disket72");
+            var font48 = Content.Load<SpriteFont>("disket48");
             var font24 = Content.Load<SpriteFont>("disket24");
             var font18 = Content.Load<SpriteFont>("disket18");
             var font14 = Content.Load<SpriteFont>("disket14");
@@ -134,7 +136,7 @@ namespace gamer
             };
             _mcUpgradeButton.Click += IncreaseMCDamage;
 
-            _enemy = new Enemy(_level, font72, enemyTextures, _mcDamage)
+            _enemy = new Enemy(_level, font72, font48, enemyTextures, _mcDamage)
             {
                 Position = new Vector2(826, 200)
             };
@@ -166,10 +168,11 @@ namespace gamer
             };
             _upgradeButtons.ForEach(c => c.Click += UpgradeCharacter);
 
-            _exitButton = new Button(buttonTexture, font14, -2)
+            _exitButton = new Button(Content.Load<Texture2D>("save"), font14, -2)
             {
-                Position = new Vector2(1496, 796),
-                Text = "Save and\nExit"
+                Position = new Vector2(1480, 810),
+                Text = "Save and",
+                Text2 = "exit"
             };
             _exitButton.Click += SaveAndExit;
 
@@ -184,6 +187,10 @@ namespace gamer
             _idleDamageText = new TextField(font24, "idle damage: " + GetIdleDamage(_characters))
             {
                 Position = new Vector2(40, 210)
+            };
+            _levelText = new TextField(font48, "level " + _level.ToString())
+            {
+                Position = new Vector2(674, 830)
             };
         }
 
@@ -243,12 +250,30 @@ namespace gamer
             _enemy.TakeDamage(((Character)sender).characterDamage);
         }
 
-        private string GetIdleDamage(List<Character> characters)
+        private int GetIdleDamage(List<Character> characters)
         {
             int result = 0;
             foreach (Character character in characters)
                 result += character.characterDamage;
-            return result.ToString();
+            return result;
+        }
+
+        private string GetNumber(int number)
+        {
+            var result = number.ToString();
+            switch (number)
+            {
+                case >= 1000000000:
+                    result = (number / 1000000000).ToString() + "b";
+                    break;
+                case >= 1000000:
+                    result = (number / 1000000).ToString() + "m";
+                    break;
+                case >= 1000:
+                    result = (number/1000).ToString() + "k";
+                    break;
+            }
+            return result;
         }
 
         private void SaveAndExit(object sender, EventArgs e)
@@ -301,17 +326,18 @@ namespace gamer
         protected override void Update(GameTime gameTime)
         {
             foreach (var button in _upgradeButtons)
-                button.Update(gameTime, _characters[button.ID].UpgradeCost.ToString());
-            _mcUpgradeButton.Update(gameTime, _mcUpgradeCost.ToString());
+                button.Update(gameTime, GetNumber(_characters[button.ID].UpgradeCost));
+            _mcUpgradeButton.Update(gameTime, GetNumber(_mcUpgradeCost));
 
             _nextLevelButton.Update(gameTime, null);
 
             foreach (var description in _characterDescriptions)
                 description.Update(gameTime, null);
 
-            _moneyText.Update(gameTime, _money.ToString());
-            _mcDamageText.Update(gameTime, "click damage: " + _mcDamage.ToString());
-            _idleDamageText.Update(gameTime, "idle damage: " + GetIdleDamage(_characters));
+            _moneyText.Update(gameTime, GetNumber(_money));
+            _mcDamageText.Update(gameTime, "click damage: " + GetNumber(_mcDamage));
+            _idleDamageText.Update(gameTime, "idle damage: " + GetNumber(GetIdleDamage(_characters)));
+            _levelText.Update(gameTime, "level " + GetNumber(_level));
 
             if (_characterDamageTimer < 1)
                 _characterDamageTimer += 1.0f / 60;
@@ -349,6 +375,7 @@ namespace gamer
             _moneyText.Draw(gameTime, _spriteBatch);
             _mcDamageText.Draw(gameTime, _spriteBatch);
             _idleDamageText.Draw(gameTime, _spriteBatch);
+            _levelText.Draw(gameTime, _spriteBatch);
 
             _enemy.Draw(gameTime, _spriteBatch);
             _exitButton.Draw(gameTime, _spriteBatch);

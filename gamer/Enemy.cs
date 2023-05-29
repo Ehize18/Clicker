@@ -11,16 +11,25 @@ namespace gamer.Entity
 {
     public class Enemy
     {
-        private float _health;
-        private float _maxHealth;
+        private int _health;
+
+        private int _maxHealth;
+
         public int EnemyType;
+
         private float _bossTimer;
+
         private int _mcDamage;
+
         private int _level;
+
         private bool _isLoop;
+
         private MouseState _currentMouse;
 
         private SpriteFont _font;
+
+        private SpriteFont _timerFont;
 
         private MouseState _previousMouse;
 
@@ -32,8 +41,6 @@ namespace gamer.Entity
 
         public event EventHandler BossNotKilled;
 
-        public bool Clicked { get; private set; }
-
         public Vector2 Position { get; set; }
 
         public Rectangle Rectangle
@@ -43,10 +50,11 @@ namespace gamer.Entity
                 return new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
             }
         }
-        public Enemy(int level, SpriteFont font, List<Texture2D> textureList, int mcDamage)
+        public Enemy(int level, SpriteFont font, SpriteFont timerfont, List<Texture2D> textureList, int mcDamage)
         {
             _mcDamage = mcDamage;
             _font = font;
+            _timerFont = timerfont;
             _textureList = textureList;
             SetEnemy(level);
             _level = level;
@@ -58,14 +66,14 @@ namespace gamer.Entity
             spriteBatch.Draw(_texture, Rectangle, Color.White);
             string hp;
             if (_health < 0)
-                hp = "0/" + _maxHealth.ToString();
+                hp = "0/" + GetNumber(_maxHealth);
             else
-                hp = _health.ToString() + "/" + _maxHealth.ToString();
+                hp = GetNumber(_health) + "/" + GetNumber(_maxHealth);
             var x = (Rectangle.X + (Rectangle.Width / 2)) - (_font.MeasureString(hp).X / 2);
             var y = (Rectangle.Y + (Rectangle.Height / 2)) - (_font.MeasureString(hp).Y / 2) + -300;
             spriteBatch.DrawString(_font, hp, new Vector2(x, y), Color.White);
             if (EnemyType == 2)
-                spriteBatch.DrawString(_font, ((int)_bossTimer).ToString() + "s", new Vector2(x + 150, y - 100), Color.White);
+                spriteBatch.DrawString(_timerFont, "time to kill\n" + ((int)_bossTimer).ToString() + "s", new Vector2(674, 19), Color.White);
         }
 
         public void Update(GameTime gameTime, int mcDamage, bool isLoop)
@@ -137,6 +145,24 @@ namespace gamer.Entity
         public void TakeDamage(int Damage)
         {
             _health -= Damage;
+        }
+
+        private string GetNumber(int number)
+        {
+            var result = number.ToString();
+            switch (number)
+            {
+                case >= 1000000000:
+                    result = Math.Round((number / 1000000000f), 1).ToString() + "b";
+                    break;
+                case >= 1000000:
+                    result = Math.Round((number / 1000000f), 1).ToString() + "m";
+                    break;
+                case >= 1000:
+                    result = Math.Round((number / 1000f), 1).ToString() + "k";
+                    break;
+            }
+            return result;
         }
     }
 }

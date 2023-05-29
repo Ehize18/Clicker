@@ -70,6 +70,13 @@
 /processorParam:TextureFormat=Compressed
 /build:disket24.spritefont
 
+#begin disket48.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:disket48.spritefont
+
 #begin disket72.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -184,6 +191,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:pyroslime.png
+
+#begin save.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:save.png
 
 #begin treasurehunter.png
 /importer:TextureImporter
