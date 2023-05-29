@@ -264,13 +264,13 @@ namespace gamer
             switch (number)
             {
                 case >= 1000000000:
-                    result = (number / 1000000000).ToString() + "b";
+                    result = Math.Round((number / 1000000000f), 1).ToString() + "b";
                     break;
                 case >= 1000000:
-                    result = (number / 1000000).ToString() + "m";
+                    result = Math.Round((number / 1000000f), 1).ToString() + "m";
                     break;
                 case >= 1000:
-                    result = (number/1000).ToString() + "k";
+                    result = Math.Round((number / 1000f), 1).ToString() + "k";
                     break;
             }
             return result;
