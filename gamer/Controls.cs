@@ -71,7 +71,10 @@ namespace gamer.Controls
 
                 spriteBatch.DrawString(_font, Text, new Vector2(x, y - 10), PenColour);
                 if (!string.IsNullOrEmpty(Text2))
+                {
+                    x = (Rectangle.X + (Rectangle.Width / 2)) - (_font.MeasureString(Text2).X / 2);
                     spriteBatch.DrawString(_font, Text2, new Vector2(x, y + 10), PenColour);
+                }
             }
         }
 

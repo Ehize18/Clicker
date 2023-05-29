@@ -47,8 +47,6 @@ namespace gamer
 
         protected override void Initialize()
         {
-            if (File.Exists("save.xml"))
-                Load();
             base.Initialize();
         }
 
@@ -74,27 +72,6 @@ namespace gamer
             var font24 = Content.Load<SpriteFont>("disket24");
             var font18 = Content.Load<SpriteFont>("disket18");
             var font14 = Content.Load<SpriteFont>("disket14");
-
-            _nextLevelButton = new Button(buttonTexture, font14, -2)
-            {
-                Text = "next\nlevel",
-                Position = new Vector2(-1000, 0)
-            };
-            _nextLevelButton.Click += IncreaseLevel;
-
-            _mcUpgradeButton = new Button(buttonTexture, font14, -1)
-            {
-                Position = new Vector2(515, 286),
-                Text = "UPGRADE"
-            };
-            _mcUpgradeButton.Click += IncreaseMCDamage;
-
-            _enemy = new Enemy(_level, font72, enemyTextures, _mcDamage)
-            {
-                Position = new Vector2(826, 200)
-            };
-            _enemy.Die += IncreaseMoney;
-            _enemy.BossNotKilled += DecreaseLevel;
 
             _characters = new List<Character>()
             {
@@ -140,6 +117,30 @@ namespace gamer
                 }
             };
 
+            if (File.Exists("save.xml"))
+                Load();
+
+            _nextLevelButton = new Button(buttonTexture, font14, -2)
+            {
+                Text = "next\nlevel",
+                Position = new Vector2(-1000, 0)
+            };
+            _nextLevelButton.Click += IncreaseLevel;
+
+            _mcUpgradeButton = new Button(buttonTexture, font14, -1)
+            {
+                Position = new Vector2(515, 286),
+                Text = "UPGRADE"
+            };
+            _mcUpgradeButton.Click += IncreaseMCDamage;
+
+            _enemy = new Enemy(_level, font72, enemyTextures, _mcDamage)
+            {
+                Position = new Vector2(826, 200)
+            };
+            _enemy.Die += IncreaseMoney;
+            _enemy.BossNotKilled += DecreaseLevel;
+
             _upgradeButtons = new List<Button>()
             {
                 new Button(buttonTexture, font14, 0)
@@ -149,17 +150,17 @@ namespace gamer
                 },
                 new Button(buttonTexture, font14, 1)
                 {
-                    Position = new Vector2(515, 525),
+                    Position = new Vector2(515, 524),
                     Text = "UPGRADE"
                 },
                 new Button(buttonTexture, font14, 2)
                 {
-                    Position = new Vector2(515, 645),
+                    Position = new Vector2(515, 643),
                     Text = "UPGRADE"
                 },
                 new Button(buttonTexture, font14, 3)
                 {
-                    Position = new Vector2(515, 765),
+                    Position = new Vector2(515, 762),
                     Text = "UPGRADE"
                 }
             };
@@ -167,7 +168,8 @@ namespace gamer
 
             _exitButton = new Button(buttonTexture, font14, -2)
             {
-                Position = new Vector2(0, 0)
+                Position = new Vector2(1496, 796),
+                Text = "Save and\nExit"
             };
             _exitButton.Click += SaveAndExit;
 
@@ -258,6 +260,8 @@ namespace gamer
             writer.WriteAttributeString("_mcUpgradeCost", _mcUpgradeCost.ToString());
             writer.WriteAttributeString("_money", _money.ToString());
             writer.WriteAttributeString("_level", _level.ToString());
+            foreach (var character in _characters)
+                character.Save(writer);
             writer.WriteEndDocument();
             writer.Close();
             Exit();
@@ -268,21 +272,34 @@ namespace gamer
             var reader = XmlReader.Create("save.xml");
             while (reader.Read())
             {
-                if (reader.NodeType == XmlNodeType.Element && reader.Name == "mc")
-                {
-                    _mcDamage = int.Parse(reader.GetAttribute("_mcDamage"));
-                    _mcUpgradeCost = int.Parse(reader.GetAttribute("_mcUpgradeCost"));
-                    _money = int.Parse(reader.GetAttribute("_money"));
-                    _level = int.Parse(reader.GetAttribute("_level"));
-                }
+                if (reader.NodeType == XmlNodeType.Element)
+                    switch (reader.Name)
+                    {
+                        case "mc":
+                            _mcDamage = int.Parse(reader.GetAttribute("_mcDamage"));
+                            _mcUpgradeCost = int.Parse(reader.GetAttribute("_mcUpgradeCost"));
+                            _money = int.Parse(reader.GetAttribute("_money"));
+                            _level = int.Parse(reader.GetAttribute("_level"));
+                            break;
+                        case "ID0":
+                            _characters[0].LoadSave(reader); 
+                            break;
+                        case "ID1":
+                            _characters[1].LoadSave(reader);
+                            break;
+                        case "ID2":
+                            _characters[2].LoadSave(reader);
+                            break;
+                        case "ID3":
+                            _characters[3].LoadSave(reader);
+                            break;
+                    }
             }
             reader.Close();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
             foreach (var button in _upgradeButtons)
                 button.Update(gameTime, _characters[button.ID].UpgradeCost.ToString());
             _mcUpgradeButton.Update(gameTime, _mcUpgradeCost.ToString());

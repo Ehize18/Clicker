@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace gamer
 {
@@ -62,6 +63,26 @@ namespace gamer
             _level += 1;
             characterDamage = _level*_damageMultipliers[ID];
             UpgradeCost = (int)(_upgradeCostMultiplier*UpgradeCost) + 1;
+        }
+
+        public void Save(XmlWriter writer)
+        {
+            writer.WriteStartElement("ID" + ID.ToString());
+            writer.WriteAttributeString("IsUnlocked", IsUnlocked.ToString());
+            writer.WriteAttributeString("_level", _level.ToString());
+            writer.WriteAttributeString("characterDamage", characterDamage.ToString());
+            writer.WriteAttributeString("UpgradeCost", UpgradeCost.ToString());
+        }
+
+        public void LoadSave(XmlReader reader)
+        {
+            var gettedIsUnlocked = reader.GetAttribute("IsUnlocked");
+            if (gettedIsUnlocked == "True")
+                IsUnlocked = true;
+            var temp = int.Parse(reader.GetAttribute("_level"));
+            _level = int.Parse(reader.GetAttribute("_level"));
+            characterDamage = int.Parse(reader.GetAttribute("characterDamage"));
+            UpgradeCost = int.Parse(reader.GetAttribute("UpgradeCost"));
         }
     }
 }
